@@ -1,7 +1,7 @@
 # spring2026_SportsProject
 # Sports Project  
 
- Names: Mark Munoz, Juan A Nino, 
+ Names: Mark Munoz, Juan A Nino, Aron Ledesma 
   
 
 # Project main description: 
@@ -13,7 +13,7 @@
 
  Notifications for your favorite teams/players 
 
- Upcoming games / player stat updates  
+ Upcoming games/player stat updates  
 
  Ability to follow favorite teams/players 
 
