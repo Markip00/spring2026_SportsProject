@@ -31,20 +31,20 @@
  Sprint Goal:
  Create the login page and basic UI layout for the application.
 
- 1. Plan
- The team will plan the sprint by focusing on building the login system and the main UI structure of the app. This includes the login page, basic navigation, and the dashboard layout.
+ 1. Plan:
+    The team will plan the sprint by focusing on building the login system and the main UI structure of the app. This includes the login page, basic navigation, and the dashboard layout.
 
- 2. Design
- Design a simple login page with fields for username/email and password. Create UI layouts for the main dashboard, navigation bar, and profile icon area.
+ 3. Design:
+    Design a simple login page with fields for username/email and password. Create UI layouts for the main dashboard, navigation bar, and profile icon area.
 
- 3. Develop
- Develop the login page functionality so users can enter their credentials and access the app. Implement the basic UI structure including the navigation bar and dashboard layout.
+ 4. Develop:
+    Develop the login page functionality so users can enter their credentials and access the app. Implement the basic UI structure including the navigation bar and dashboard layout.
 
- 4. Test
- Test the login system to make sure users can log in successfully and that the UI loads correctly after login.
+ 5. Test:
+    Test the login system to make sure users can log in successfully and that the UI loads correctly after login.
 
- 5. Review
- Review the login page and UI design to make sure it is easy to use and works properly.
+ 6. Review:
+    Review the login page and UI design to make sure it is easy to use and works properly.
 
- 6. Improve
- Fix any UI issues and begin adding more features such as user profiles, following teams, and displaying team/player updates on the dashboard.
+ 7. Improve:
+     Fix any UI issues and begin adding more features such as user profiles, following teams, and displaying team/player updates on the dashboard.
