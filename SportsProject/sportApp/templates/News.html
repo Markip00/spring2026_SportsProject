@@ -1,84 +1,12 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html> 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <title>3Pointers.com</title>
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href=" {% static 'images_in_website/basketball_icon.png' %} ">
-  <!-- my CSS --> 
-  <link rel="stylesheet" href=" {% static 'css_file/style.css' %} ">
-  <!--import the font--> 
-   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&family=Graduate&family=Trispace:wght@100;200;300;400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <script src="index.js"></script>
-<!--import icons -->
-<script src="https://kit.fontawesome.com/f7c3808ca6.js" crossorigin="anonymous"></script>
-  <!-- Bootstrap CSS -->
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
-    crossorigin="anonymous"
-  >
-
-  <!--Boostrap Javascript-->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-</head>
-
-<body>  
-<!--NavBar-->
-<nav class="navbar navbar-expand-lg header_style navbar-dark header1">
-  <div class="container-fluid">
-    <a class="navbar-brand header1" href="#">3pointers</a>
-    
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
-         <li class="nav-item">
-          <a class="  nav-link active" href="#">WatchParty</a>
-        </li>
-
-
-        <li class="nav-item">
-          <a class="  nav-link active" href="#">Clips</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link  active " href="#">News</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle text-white" href="#" data-bs-toggle="dropdown">
-            My Profile
-          </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Edit Profile</a></li>
-            <li><a class="dropdown-item" href="#">Add Friends</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Upgrade to premium</a></li>
-
-          </ul>
-        </li>
-      <div class="d-flex justify-content-center align-items-center">
-      <i class="fa-regular fa-envelope fa-xl text-white  "></i>
-      </div>  
-      </ul>
-
-        <form class="d-flex" role="search">
-        <input class="form-control me-2  " type="search" placeholder="Search" aria-label="Search"/>
-        <button type="button" class="btn btn-outline-light ">Search</button>
-      </form>
  
-    </div>
-  </div>
-</nav>
 
+{% block title %}3Pointers{% endblock %}
+
+{% block content %}
+
+ 
 <div class="p-2 d-flex justify-content-center align-items-center gap-2 flex-wrap header1">
   <h1> Most Popular New</h1>
 </div>
@@ -120,6 +48,7 @@
 
 
 <!--Other news rows -->
+<!--add an api that adds to the colums so that this is not hard coded -->
 <div class="container text-center header_style ">
   <div class="row">
 
@@ -188,5 +117,8 @@
   </div>
 </div>
 
-</body>
-</html> 
+ 
+ 
+{% endblock %}
+
+ 

@@ -1,0 +1,95 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{% block title %}3Pointers.com{% endblock %}</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="{% static 'images_in_website/basketball_icon.png' %}">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{% static 'css_file/style.css' %}">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&family=Graduate&family=Trispace:wght@100;200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/f7c3808ca6.js" crossorigin="anonymous"></script>
+
+  <!-- Bootstrap CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg header_style navbar-dark header1">
+  <div class="container-fluid">
+
+    <a class="navbar-brand header1" href="{% url 'home' %}">3pointers</a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        <li class="nav-item">
+          <a class="nav-link active" href="{% url 'watchparty' %}">WatchParty</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link active" href="{% url 'spaces' %}">spaces</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link active" href="{% url 'clips' %}">Clips</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link active" href="{% url 'news' %}">News</a>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-white" href="#" data-bs-toggle="dropdown">
+            My Profile
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'edit_profile' %}">Edit Profile</a></li>
+            <li><a class="dropdown-item" href="{% url 'add_friends' %}">Add Friends</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url 'premium' %}">Upgrade to premium</a></li>
+          </ul>
+        </li>
+
+        <div class="d-flex justify-content-center align-items-center">
+             <a class="nav-link active fa-regular fa-envelope fa-xl text-white" href="{% url 'direct_messages' %}"></a>
+        </div>
+
+      </ul>
+
+      <form class="d-flex" role="search">
+        <input class="form-control me-2" type="search" placeholder="Search">
+        <button type="button" class="btn btn-outline-light">Search</button>
+      </form>
+
+    </div>
+  </div>
+</nav>
+
+ 
+{% block content %}{% endblock %}
+
+<!--bootstrap js-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
