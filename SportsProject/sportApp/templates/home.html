@@ -6,16 +6,23 @@
 
 {% block content %} 
 
-<div class = "d-flex justify-content-center align-items-center"> 
-<h1> Welcome to 3pointers</h1>
- 
-</div>
+<div class = "d-flex flex-column w-75 mx-auto align-items-center mt-5 p-5" style="background-color: rgb(255, 231, 172);"> 
+<h1 class=" header1"> Welcome to 3pointers</h1>
+ <img src=" {% static 'images_in_website/homepage_ball_logo.png' %}  " alt="homepage_logo" class="img-fluid w-25">
+<h3 class="header1"> Watchparty together</h3>
+<h3 class="header1"> Connect with fans & rivals </h3>
+<h3 class="header1"> Catch up on the latests news</h3>
+ </div>
   
+<!-- might add a section that makes it look less empty, but for now this is the not signed in template -->
 
-<div class = "d-flex justify-content-center align-items-center"> 
 
-<p> maybe have a section with the latest game scores and when hover on the games there is a dropdown with the comment with the most likes </p>
+<!--the buttons to sign in or create account-->
  
+ 
+ <div class="d-flex justify-content-center p-5 gap-3">
+  <a href="{% url 'sign_up' %}" class="btn btn-warning" style="font-family:Graduate;">Sign up </a>
+  <a href="{% url 'log_in' %}" class="btn btn-warning" style="font-family:Graduate;"> Log in</a>
 </div>
    
 

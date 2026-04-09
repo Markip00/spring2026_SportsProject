@@ -12,6 +12,8 @@ urlpatterns = [
     path('add_friends/' , views.add_friends , name = 'add_friends' ),
     path('direct_messages/' , views.direct_messages , name = 'direct_messages' ),
     path('premium/' , views.premium , name = 'premium' ),
+    path('sign_up/' , views.sign_up , name = 'sign_up' ),
+    path('log_in/' , views.log_in , name = 'log_in' ),
 ]
  
  
