@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-center align-items-center" style="height: 90vh;">
+    
+    <div class="card shadow p-4" style="width: 400px; border-radius: 15px;">
+        
+        <h2 class="text-center mb-3">Login</h2>
+        <p class="text-center text-muted mb-4">Login to your account</p>
+
+        {% for message in messages %}
+            <p class="text-danger text-center">{{ message }}</p>
+        {% endfor %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <input type="text" name="username" class="form-control" placeholder="Enter username" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+            </div>
+
+            <button type="submit" class="btn btn-warning w-100">Login</button>
+        </form>
+
+        <p class="text-center mt-3">
+            Don’t have an account?
+            <a href="{% url 'signup' %}">Sign Up</a>
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -12,6 +12,9 @@ urlpatterns = [
     path('add_friends/' , views.add_friends , name = 'add_friends' ),
     path('direct_messages/' , views.direct_messages , name = 'direct_messages' ),
     path('premium/' , views.premium , name = 'premium' ),
+    path('signup/', views.signup, name='signup'),
+    path('login/', views.user_login, name='login'),
+    path('logout/', views.user_logout, name='logout'),
 ]
  
  
