@@ -12,6 +12,7 @@ def home(request):
 def signup(request):
     if request.method == "POST":
         username = request.POST['username']
+        email = request.POST['email']  
         password = request.POST['password']
         confirm = request.POST['confirm_password']
 
@@ -23,7 +24,12 @@ def signup(request):
             messages.error(request, "Username already exists")
             return redirect('signup')
 
-        user = User.objects.create_user(username=username, password=password)
+        user = User.objects.create_user(
+            username=username,
+            email=email,      
+            password=password
+        )
+
         user.save()
         return redirect('login')
 
