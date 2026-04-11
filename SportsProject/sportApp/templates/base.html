@@ -76,6 +76,16 @@
 
       </ul>
 
+      <div class="d-flex align-items-center me-3">
+        {% if user.is_authenticated %}
+          <span class="text-white me-3">Hi, {{ user.username }}</span>
+          <a class="btn btn-outline-light me-2" href="{% url 'logout' %}">Logout</a>
+        {% else %}
+          <a class="btn btn-outline-light me-2" href="{% url 'login' %}">Login</a>
+          <a class="btn btn-warning me-2" href="{% url 'signup' %}">Sign Up</a>
+        {% endif %}
+      </div>
+
       <form class="d-flex" role="search">
         <input class="form-control me-2" type="search" placeholder="Search">
         <button type="button" class="btn btn-outline-light">Search</button>
@@ -85,7 +95,6 @@
   </div>
 </nav>
 
- 
 {% block content %}{% endblock %}
 
 <!--bootstrap js-->
