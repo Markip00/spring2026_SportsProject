@@ -1,3 +1,18 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-# Create your models here.
+class SpacePost(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    message = models.TextField()
+    likes = models.ManyToManyField(User, related_name="liked_space_posts", blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def total_likes(self):
+        return self.likes.count()
+
+class SpaceComment(models.Model):
+    post = models.ForeignKey(SpacePost, on_delete=models.CASCADE, related_name="comments")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)

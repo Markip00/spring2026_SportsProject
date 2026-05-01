@@ -5,27 +5,188 @@
 
 {% block content %}
 
-{% if user.is_authenticated %}
-    <div class="text-center mt-3">
-        <p>Welcome {{ user.username }}</p>
-        <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
-    </div>
-{% else %}
-    <div class="text-center mt-3">
-        <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
-        <a href="{% url 'signup' %}" class="btn btn-success">Sign Up</a>
-    </div>
-{% endif %}
+<div class="container py-4">
 
-<div class="d-flex justify-content-center align-items-center mt-4">
-    <h1>Welcome to 3pointers</h1>
-</div>
+    <!-- Hero Section -->
+    <div class="text-center my-5 p-5 rounded shadow" style="background: linear-gradient(135deg, #111, #1f1f1f); color: white;">
+        <h1 class="display-3 fw-bold text-uppercase">3Pointers</h1>
+        <p class="lead mt-3">
+            The home court for basketball fans.
+        </p>
+        <p class="fs-5">
+            Live scores. Game schedules. Standings. Everything basketball — all in one place.
+        </p>
+    </div>
 
-<div class="d-flex justify-content-center align-items-center mt-3">
-    <p>
-        maybe have a section with the latest game scores and when hover on the games 
-        there is a dropdown with the details
-    </p>
+    <!-- Featured Sections -->
+    <div class="row g-4 mb-5">
+
+        <div class="col-md-4">
+            <div class="card shadow-lg h-100 border-0">
+                <div class="card-body text-center">
+                    <h3 class="fw-bold text-uppercase">Live Scores</h3>
+                    <p>
+                        Stay locked in with the latest results and final scores from around the league.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-lg h-100 border-0">
+                <div class="card-body text-center">
+                    <h3 class="fw-bold text-uppercase">Upcoming Matchups</h3>
+                    <p>
+                        See what games are coming up and get ready for the biggest matchups.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-lg h-100 border-0">
+                <div class="card-body text-center">
+                    <h3 class="fw-bold text-uppercase">Standings</h3>
+                    <p>
+                        Track team rankings and see who’s leading the race this season.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Latest Scores -->
+    <section class="mb-5">
+        <h2 class="fw-bold text-uppercase mb-3">Latest Scores</h2>
+
+        <div class="row g-3">
+            {% if latest_scores %}
+                {% for game in latest_scores %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card shadow-sm h-100 border-dark">
+                            <div class="card-body">
+                                <h5 class="fw-bold">{{ game.home_team }} vs {{ game.away_team }}</h5>
+                                <p class="mb-1"><strong>Final:</strong> {{ game.home_score }} - {{ game.away_score }}</p>
+                                <p class="mb-1"><strong>Status:</strong> {{ game.status }}</p>
+                                <p><strong>Date:</strong> {{ game.date }}</p>
+                                <small class="text-muted">Click later for full stats and breakdowns.</small>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            No scores posted yet. Check back after tip-off.
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Upcoming Games -->
+    <section class="mb-5">
+        <h2 class="fw-bold text-uppercase mb-3">Upcoming Games</h2>
+
+        <div class="row g-3">
+            {% if upcoming_games %}
+                {% for game in upcoming_games %}
+                    <div class="col-md-6">
+                        <div class="card shadow-sm h-100 border-dark">
+                            <div class="card-body">
+                                <h5 class="fw-bold">{{ game.home_team }} vs {{ game.away_team }}</h5>
+                                <p class="mb-1"><strong>Date:</strong> {{ game.date }}</p>
+                                <p class="mb-1"><strong>Time:</strong> {{ game.time }}</p>
+                                <p><strong>Arena:</strong> {{ game.location }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            No upcoming games on the board right now.
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Headlines -->
+    <section class="mb-5">
+        <h2 class="fw-bold text-uppercase mb-3">Basketball Headlines</h2>
+
+        <div class="row g-3">
+            {% if latest_news %}
+                {% for article in latest_news %}
+                    <div class="col-md-4">
+                        <div class="card shadow-sm h-100">
+                            {% if article.image %}
+                                <img src="{{ article.image }}" class="card-img-top" alt="{{ article.title }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="fw-bold">{{ article.title }}</h5>
+                                <p>{{ article.summary }}</p>
+                                {% if article.link %}
+                                    <a href="{{ article.link }}" class="btn btn-outline-dark">Read More</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            No headlines available yet.
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Standings -->
+    <section class="mb-5">
+        <h2 class="fw-bold text-uppercase mb-3">League Standings</h2>
+
+        {% if standings %}
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Team</th>
+                            <th>Wins</th>
+                            <th>Losses</th>
+                            <th>Win %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for team in standings %}
+                            <tr>
+                                <td class="fw-bold">{{ team.name }}</td>
+                                <td>{{ team.wins }}</td>
+                                <td>{{ team.losses }}</td>
+                                <td>{{ team.win_percentage }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="card">
+                <div class="card-body text-center">
+                    Standings will be available once data is connected.
+                </div>
+            </div>
+        {% endif %}
+    </section>
+
 </div>
 
 {% endblock %}

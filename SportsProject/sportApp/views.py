@@ -1,8 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from .models import SpacePost, SpaceComment
 
 @login_required
 def home(request):
@@ -64,7 +65,48 @@ def watchparty(request):
     return render(request, 'watchparty.html', {})
 
 def spaces(request):
-    return render(request, 'spaces.html', {})
+    if request.method == "POST":
+        action = request.POST.get("action")
+
+        if not request.user.is_authenticated:
+            return redirect("login")
+
+        if action == "new_post":
+            title = request.POST.get("title")
+            message = request.POST.get("message")
+
+            if title and message:
+                SpacePost.objects.create(
+                    user=request.user,
+                    title=title,
+                    message=message
+                )
+
+        elif action == "comment":
+            post_id = request.POST.get("post_id")
+            comment = request.POST.get("comment")
+            post = get_object_or_404(SpacePost, id=post_id)
+
+            if comment:
+                SpaceComment.objects.create(
+                    post=post,
+                    user=request.user,
+                    comment=comment
+                )
+
+        elif action == "like":
+            post_id = request.POST.get("post_id")
+            post = get_object_or_404(SpacePost, id=post_id)
+
+            if request.user in post.likes.all():
+                post.likes.remove(request.user)
+            else:
+                post.likes.add(request.user)
+
+        return redirect("spaces")
+
+    posts = SpacePost.objects.all().order_by("-created_at")
+    return render(request, "spaces.html", {"posts": posts})
 
 def clips(request):
     return render(request, 'clips.html', {})
