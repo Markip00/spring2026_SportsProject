@@ -5,6 +5,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import SpacePost, SpaceComment
 
+from datetime import date
+import requests
+
 @login_required
 def home(request):
     return render(request, 'home.html')
@@ -60,10 +63,7 @@ def user_logout(request):
 
 def home(request):
     return render(request, 'home.html', {})
-
-def watchparty(request):
-    return render(request, 'watchparty.html', {})
-
+ 
 def spaces(request):
     if request.method == "POST":
         action = request.POST.get("action")
@@ -111,8 +111,35 @@ def spaces(request):
 def clips(request):
     return render(request, 'clips.html', {})
 
-def news(request):
-    return render(request, 'news.html',{})
+def scores(request): 
+    API_KEY = "apikey_goes_here" 
+    BASE_URL = "https://api.balldontlie.io"
+
+    headers = {"Authorization": API_KEY}
+    today = date.today().isoformat()
+    today_display = date.today().strftime("%m/%d/%Y")
+    response = requests.get(
+        f"{BASE_URL}/nba/v1/games",
+        headers=headers,
+        params={"dates[]": today}
+    )
+
+    games = []
+
+    if response.status_code == 200:
+        data = response.json()
+        for game in data.get("data", []):
+            games.append({
+                "home": game["home_team"]["full_name"],
+                "away": game["visitor_team"]["full_name"],
+                "score": f"{game['visitor_team_score']}-{game['home_team_score']}",
+                "status": game["status"]
+            })
+ 
+    return render(request, "scores.html", {
+        "games": games,
+        "date": today_display
+    })
 
 def edit_profile(request):
     return render(request, 'edit_profile.html',{})
