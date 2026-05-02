@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import SpacePost, SpaceComment
+from googleapiclient.discovery import build
 
 from datetime import date
 import requests
@@ -153,5 +154,51 @@ def direct_messages(request):
 
 def premium(request):
     return render(request, 'premium.html',{})
+
+def youtube_search(query):
+    youtube = build('youtube', 'v3', developerKey='your_key_here')
+
+    request = youtube.search().list(
+        q=query,
+        part='snippet',
+        type='video',     # video, channel, playlist
+        maxResults=10,    # max results pulled
+        order='relevance' # date, relevance, viewcount, etc
+        # publishedAfter: 2026-01-01T00:00:00Z ## finds clips from last 24 hours or curr week
+    )
+
+    response = request.execute()
+
+    for item in response.get('items', []):
+        title = item['snippet']['title']
+        video_id = item['id']['videoId']
+        print(f"Title: {title} | ID: {video_id}")
+
+
+def clips_page(request):
+    api_key = 'YOUTUBE_API_KEY'
+    search_url = 'https://www.googleapis.com/youtube/v3/search'
+
+    params = {
+        'part': 'snippet',
+        'q': 'Trending NBA highlights',
+        'key': api_key,
+        'maxResults': 12,
+        'type': 'video',
+        'order': 'date',
+    }
+
+    response = requests.get(search_url, params=params)
+    results = response.json().get('items', [])
+
+    videos = []
+    for item in results:
+        videos.append({
+            'title': item['snippet']['title'],
+            'id': item['id']['videoId'],
+            'thumbnail': item['snippet']['thumbnails']['high']['url'],
+        })
+
+    return render(request, 'clips.html', {'videos': videos})
 
 
