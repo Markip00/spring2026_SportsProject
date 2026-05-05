@@ -1,64 +1,107 @@
 {% extends "base.html" %}
-{% load static %}
-{% block title %}3Pointers{% endblock %}
-{% block content %} 
 
-<div class="p-2 d-flex justify-content-center align-items-center gap-2 flex-wrap header1">
-  <h1>NBA Games for {{ date }}</h1>
-</div>
+{% block title %}Game News{% endblock %}
 
-{% if games %}
+{% block content %}
 
-<div class="container px-3">
+<div class="container-fluid py-5" 
+     style="
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+     ">
 
-    <div class="row g-3">
+    <div class="container">
 
-        {% for game in games %}
-        <div class="col-12 col-md-6 col-lg-4 d-flex">
+        <!-- HEADER -->
+        <div class="text-center mb-5">
+            <h1 class="fw-bold">NBA Games</h1>
+            <p class="text-muted">Scores, game status, and fan comments for {{ date }}</p>
+        </div>
 
-            <div class="p-3 text-center d-flex flex-column w-100"
-                 style="background-color: rgb(255, 231, 172); border-radius: 12px;">
-                <h4 class="mb-2">
-                    {{ game.away }} vs {{ game.home }}
-                </h4>
+        <!-- GAME GRID -->
+        <div class="row justify-content-center">
 
-                <div class="mb-2">
-                    <strong>{{ game.score }}</strong>
+            {% for game in games %}
+                <!-- CENTERED + RESPONSIVE -->
+                <div class="col-md-8 col-lg-6 col-xl-4 mb-4 d-flex justify-content-center">
+
+                    <div class="card border-0 shadow h-100 w-100"
+                         style="
+                            background-color: #fff3cd;
+                            border-radius: 16px;
+                            border-left: 6px solid #dc3545;
+                            max-width: 420px;
+                         ">
+
+                        <div class="card-body p-4 d-flex flex-column">
+
+                            <!-- TEAMS -->
+                            <div class="text-center mb-3">
+                                <h4 class="fw-bold mb-2">
+                                    {{ game.away_team }}
+                                    <br>
+                                    <span class="text-muted">vs</span>
+                                    <br>
+                                    {{ game.home_team }}
+                                </h4>
+
+                                <!-- SCORE -->
+                                <div class="fw-bold fs-4 mt-3">
+                                    {{ game.away_score }} - {{ game.home_score }}
+                                </div>
+
+                                <!-- STATUS -->
+                                <span class="badge bg-dark mt-2">
+                                    {{ game.status }}
+                                </span>
+                            </div>
+
+                            <hr>
+
+                            <!-- COMMENTS -->
+                            <div class="mb-3 flex-grow-1" style="max-height: 200px; overflow-y: auto;">
+                                <h6 class="fw-bold">Fan Comments</h6>
+
+                                {% for comment in game.comments.all %}
+                                    <div class="bg-white border rounded p-2 mb-2 shadow-sm">
+                                        <strong>{{ comment.user.username }}</strong>
+                                        <p class="mb-1">{{ comment.comment }}</p>
+                                        <small class="text-muted">{{ comment.created_at }}</small>
+                                    </div>
+                                {% empty %}
+                                    <p class="text-muted">No comments yet.</p>
+                                {% endfor %}
+                            </div>
+
+                            <!-- COMMENT FORM -->
+                            <form method="POST" class="mt-auto">
+                                {% csrf_token %}
+                                <input type="hidden" name="game_id" value="{{ game.id }}">
+
+                                <input type="text"
+                                       name="comment"
+                                       class="form-control mb-2"
+                                       placeholder="Write a comment...">
+
+                                <button type="submit" class="btn btn-dark w-100">
+                                    Post Comment
+                                </button>
+                            </form>
+
+                        </div>
+                    </div>
+
                 </div>
-
-                <small class="text-muted mb-3">
-                    {{ game.status }}
-                </small>
-
-                <!-- COMMENTS SECTION -->
-                <div class="mt-auto text-start">
-
-                    <hr>
-
-                    <h6>Comments</h6>
-
-                    <input type="text"
-                           class="form-control form-control-sm mb-2"
-                           placeholder="Write a comment...">
-
-                    <button class="btn btn-sm btn-dark w-100">
-                        Post
-                    </button>
-
+            {% empty %}
+                <div class="text-center text-muted mt-5">
+                    <h4>No games found today</h4>
+                    <p>Check back later for updates.</p>
                 </div>
-
-            </div>
+            {% endfor %}
 
         </div>
-        {% endfor %}
 
     </div>
-
 </div>
 
-{% else %}
-    <h1 class="text-center">No games today.</h1>
-{% endif %}
 {% endblock %}
-  </div>
-</div>

@@ -3,8 +3,12 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+<<<<<<< HEAD
 from .models import SpacePost, SpaceComment
 from googleapiclient.discovery import build
+=======
+from .models import SpacePost, SpaceComment, GameScore, ScoreComment
+>>>>>>> main
 
 from datetime import date
 import requests
@@ -113,30 +117,56 @@ def clips(request):
     return render(request, 'clips.html', {})
 
 def scores(request): 
-    API_KEY = "apikey_goes_here" 
+    API_KEY = "00ba9f97-a38b-42c7-b1f6-9db22f17d68a" 
     BASE_URL = "https://api.balldontlie.io"
 
-    headers = {"Authorization": API_KEY}
     today = date.today().isoformat()
     today_display = date.today().strftime("%m/%d/%Y")
+
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            return redirect("login")
+
+        game_id = request.POST.get("game_id")
+        comment = request.POST.get("comment")
+
+        game = get_object_or_404(GameScore, id=game_id)
+
+        if comment:
+            ScoreComment.objects.create(
+                game=game,
+                user=request.user,
+                comment=comment
+            )
+
+        return redirect("scores")
+
+    headers = {"Authorization": API_KEY}
+
     response = requests.get(
         f"{BASE_URL}/nba/v1/games",
         headers=headers,
         params={"dates[]": today}
     )
 
-    games = []
-
     if response.status_code == 200:
         data = response.json()
+
         for game in data.get("data", []):
-            games.append({
-                "home": game["home_team"]["full_name"],
-                "away": game["visitor_team"]["full_name"],
-                "score": f"{game['visitor_team_score']}-{game['home_team_score']}",
-                "status": game["status"]
-            })
- 
+            GameScore.objects.update_or_create(
+                game_id=str(game["id"]),
+                defaults={
+                    "home_team": game["home_team"]["full_name"],
+                    "away_team": game["visitor_team"]["full_name"],
+                    "home_score": game["home_team_score"],
+                    "away_score": game["visitor_team_score"],
+                    "status": game["status"],
+                    "game_date": today,
+                }
+            )
+
+    games = GameScore.objects.filter(game_date=today).order_by("id")
+
     return render(request, "scores.html", {
         "games": games,
         "date": today_display
