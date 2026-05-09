@@ -3,7 +3,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import SpacePost, SpaceComment, GameScore, ScoreComment
+from .models import SpacePost, SpaceComment, GameScore, ScoreComment, DirectMessage
+from django.db.models import Q
 
 from datetime import date
 import requests
@@ -174,8 +175,40 @@ def add_friends(request):
     return render(request, 'add_friends.html',{})
 
 
+@login_required
 def direct_messages(request):
-    return render(request, 'direct_messages.html', {})
+    users = User.objects.exclude(id=request.user.id)
+
+    return render(request, "direct_messages.html", {
+        "users": users
+    })
+
+
+@login_required
+def dm_chat(request, username):
+    other_user = get_object_or_404(User, username=username)
+
+    if request.method == "POST":
+        message = request.POST.get("message")
+
+        if message:
+            DirectMessage.objects.create(
+                sender=request.user,
+                receiver=other_user,
+                message=message
+            )
+
+        return redirect("dm_chat", username=other_user.username)
+
+    messages = DirectMessage.objects.filter(
+        Q(sender=request.user, receiver=other_user) |
+        Q(sender=other_user, receiver=request.user)
+    ).order_by("created_at")
+
+    return render(request, "dm_chat.html", {
+        "other_user": other_user,
+        "messages": messages
+    })
 
 def premium(request):
     return render(request, 'premium.html',{})

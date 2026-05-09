@@ -10,6 +10,7 @@ urlpatterns = [
     path('edit_profile/' , views.edit_profile , name = 'edit_profile' ),
     path('add_friends/' , views.add_friends , name = 'add_friends' ),
     path('direct_messages/' , views.direct_messages , name = 'direct_messages' ),
+    path("direct_messages/<str:username>/", views.dm_chat, name="dm_chat"),
     path('premium/' , views.premium , name = 'premium' ),
     path('signup/', views.signup, name='signup'),
     path('login/', views.user_login, name='login'),
