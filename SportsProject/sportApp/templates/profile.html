@@ -46,20 +46,26 @@
 <!--Team-->
 <div class="mb-4">
 <label class="form-label">Favorite Team</label>
-<input type="text" class="form-control" name="favorite_team" value="{{ profile.favorite_team }}">
+<select class="form-control" name="favorite_team">
+<option value="">Select a team</option>
+{% for team in teams %}
+<option value="{{ team.full_name }}"
+{% if profile.favorite_team == team.full_name %}selected{% endif %}>
+{{ team.full_name }}
+</option>
+{% endfor %}
+</select>
 </div>
+
 
 <!--save-->
 <div class="d-grid">
 <button type="submit" class="btn btn-warning">Save Changes</button>
- 
 </div>
 
 </form>
-
 </div>
 </div>
-
 </div>
 
 {% endblock %}

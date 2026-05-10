@@ -154,32 +154,46 @@ def direct_messages(request):
 def premium(request):
     return render(request, 'premium.html',{})
 
+ 
 def profile(request):
-
+    API_KEY = "apikeygoeshere"
+    BASE_URL = "https://api.balldontlie.io/v1"
     user = request.user
-
     profile, created = Profile.objects.get_or_create(user=user)
+ 
+    response = requests.get(
+        f"{BASE_URL}/teams",
+        headers={"Authorization": f"Bearer {API_KEY}"}
+    )
+    teams = []
+    if response.ok:
+        try:
+            teams = response.json().get("data", [])
+        except Exception:
+            teams = []
 
     if request.method == "POST":
 
         # username
-        user.username = request.POST.get("name")
-        user.save()
+        name = request.POST.get("name")
+        if name:
+            user.username = name
+            user.save()
 
         # bio
-        profile.bio = request.POST.get("bio")
+        profile.bio = request.POST.get("bio", "")
 
         # favorite team
-        profile.favorite_team = request.POST.get("favorite_team")
+        profile.favorite_team = request.POST.get("favorite_team", "")
 
         # profile picture
         if request.FILES.get("profile_picture"):
             profile.profile_picture = request.FILES["profile_picture"]
 
         profile.save()
-
         return redirect("profile")
-
+ 
     return render(request, "profile.html", {
-        "profile": profile
+        "profile": profile,
+        "teams": teams
     })
