@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}3Pointers{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+<div class="d-flex justify-content-center mb-4">
+<h1>My Profile</h1>
+</div>
+
+<div class="row justify-content-center">
+<div class="col-md-6">
+
+<form method="POST" enctype="multipart/form-data">
+
+{% csrf_token %}
+
+<!--pfp-->
+<div class="mb-4 text-center">
+
+{% if profile.profile_picture %}
+<img src="{{ profile.profile_picture.url }}" class="rounded-circle mb-3" width="150" height="150" alt="Profile Picture">
+{% else %}
+<img src="{% static 'images_in_website/basketball_icon.png' %}" class="rounded-circle mb-3" width="150" height="150" alt="Profile Picture">
+{% endif %}
+
+<input type="file" class="form-control" name="profile_picture" accept=".jpg,.jpeg,.png,image/png,image/jpeg">
+
+</div>
+
+<!--username-->
+<div class="mb-3">
+<label class="form-label">Username</label>
+<input type="text" class="form-control" name="name" value="{{ user.username }}">
+</div>
+
+<!--Bio-->
+<div class="mb-3">
+<label class="form-label">Bio</label>
+<textarea class="form-control" name="bio" rows="3">{{ profile.bio }}</textarea>
+</div>
+
+<!--Team-->
+<div class="mb-4">
+<label class="form-label">Favorite Team</label>
+<input type="text" class="form-control" name="favorite_team" value="{{ profile.favorite_team }}">
+</div>
+
+<!--save-->
+<div class="d-grid">
+<button type="submit" class="btn btn-warning">Save Changes</button>
+ 
+</div>
+
+</form>
+
+</div>
+</div>
+
+</div>
+
+{% endblock %}

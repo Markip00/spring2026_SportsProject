@@ -4,6 +4,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import SpacePost, SpaceComment
+from .models import Profile
+
 
 from datetime import date
 import requests
@@ -140,9 +142,7 @@ def scores(request):
         "games": games,
         "date": today_display
     })
-
-def edit_profile(request):
-    return render(request, 'edit_profile.html',{})
+ 
 
 def add_friends(request):
     return render(request, 'add_friends.html',{})
@@ -154,4 +154,32 @@ def direct_messages(request):
 def premium(request):
     return render(request, 'premium.html',{})
 
+def profile(request):
 
+    user = request.user
+
+    profile, created = Profile.objects.get_or_create(user=user)
+
+    if request.method == "POST":
+
+        # username
+        user.username = request.POST.get("name")
+        user.save()
+
+        # bio
+        profile.bio = request.POST.get("bio")
+
+        # favorite team
+        profile.favorite_team = request.POST.get("favorite_team")
+
+        # profile picture
+        if request.FILES.get("profile_picture"):
+            profile.profile_picture = request.FILES["profile_picture"]
+
+        profile.save()
+
+        return redirect("profile")
+
+    return render(request, "profile.html", {
+        "profile": profile
+    })
