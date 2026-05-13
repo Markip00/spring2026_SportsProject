@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}3Pointers{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4" style="background:#fafafa; min-height:100vh;">
+
+    <div class="d-flex justify-content-center align-items-center mb-4">
+        <h1>Chat with {{ other_user.username }}</h1>
+    </div>
+
+    <div class="container">
+
+        <div class="card border shadow-sm mx-auto" style="max-width:1100px; height:700px;">
+            <div class="row g-0 h-100">
+
+                <!-- LEFT SIDE -->
+                <div class="col-md-4 border-end">
+
+                    <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0 fw-bold">Direct</h4>
+                        <span style="font-size:24px;">✎</span>
+                    </div>
+
+                    <div class="p-3">
+
+                        <div class="d-flex align-items-center p-2 rounded"
+                             style="background:#efefef;">
+
+                            <div class="rounded-circle bg-dark text-white d-flex justify-content-center align-items-center me-3"
+                                 style="width:50px; height:50px;">
+                                {{ other_user.username|first|upper }}
+                            </div>
+
+                            <div>
+                                <strong>{{ other_user.username }}</strong>
+                                <p class="text-muted mb-0 small">
+                                    Active conversation
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <a href="{% url 'direct_messages' %}"
+                           class="btn btn-outline-dark btn-sm mt-3 w-100">
+                            Back to messages
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <!-- RIGHT CHAT -->
+                <div class="col-md-8 d-flex flex-column">
+
+                    <!-- CHAT HEADER -->
+                    <div class="p-3 border-bottom d-flex align-items-center justify-content-between">
+
+                        <div class="d-flex align-items-center">
+
+                            <div class="rounded-circle bg-dark text-white d-flex justify-content-center align-items-center me-3"
+                                 style="width:42px; height:42px;">
+                                {{ other_user.username|first|upper }}
+                            </div>
+
+                            <strong>{{ other_user.username }}</strong>
+
+                        </div>
+
+                        <span style="font-size:24px;">ⓘ</span>
+
+                    </div>
+
+                    <!-- MESSAGES -->
+                    <div class="flex-grow-1 p-4"
+                         style="overflow-y:auto; background:#fff;">
+
+                        {% for msg in messages %}
+
+                            {% if msg.sender == request.user %}
+
+                                <div class="text-end mb-3">
+
+                                    <div class="d-inline-block px-3 py-2 rounded-pill"
+                                         style="background:#efefef; max-width:70%;">
+                                        {{ msg.message }}
+                                    </div>
+
+                                    <br>
+
+                                    <small class="text-muted">
+                                        {{ msg.created_at }}
+                                    </small>
+
+                                </div>
+
+                            {% else %}
+
+                                <div class="text-start mb-3">
+
+                                    <div class="d-inline-block px-3 py-2 rounded-pill border"
+                                         style="background:#fff; max-width:70%;">
+                                        {{ msg.message }}
+                                    </div>
+
+                                    <br>
+
+                                    <small class="text-muted">
+                                        {{ msg.created_at }}
+                                    </small>
+
+                                </div>
+
+                            {% endif %}
+
+                        {% empty %}
+
+                            <p class="text-center text-muted">
+                                No messages yet. Start the conversation.
+                            </p>
+
+                        {% endfor %}
+
+                    </div>
+
+                    <!-- INPUT -->
+                    <div class="p-3 border-top bg-white">
+
+                        <form method="POST"
+                              class="d-flex align-items-center gap-2">
+
+                            {% csrf_token %}
+
+                            <input type="text"
+                                   name="message"
+                                   class="form-control rounded-pill"
+                                   placeholder="Message...">
+
+                            <button type="submit"
+                                    class="btn btn-dark rounded-pill px-4">
+                                Send
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

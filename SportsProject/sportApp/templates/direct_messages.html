@@ -1,16 +1,62 @@
- {% extends "base.html" %}
+{% extends "base.html" %}
 {% load static %}
- 
 
 {% block title %}3Pointers{% endblock %}
 
-{% block content %} 
+{% block content %}
 
-<div class = "d-flex justify-content-center align-items-center"> 
-<h1> My DM's  </h1>
+<div class="container-fluid py-4" style="background:#fafafa; min-height:100vh;">
+
+  <div class="d-flex justify-content-center align-items-center mb-4">
+    <h1>My DM's</h1>
+  </div>
+
+  <!-- here goes a list with the dms idk -->
+  <div class="container">
+    <div class="card border shadow-sm mx-auto" style="max-width:1100px; height:700px;">
+      <div class="row g-0 h-100">
+
+        <div class="col-md-4 border-end">
+          <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+            <h4 class="mb-0 fw-bold">Direct</h4>
+            <span style="font-size:24px;">✎</span>
+          </div>
+
+          <div class="p-3">
+            {% for user in users %}
+              <a href="{% url 'dm_chat' user.username %}" class="text-decoration-none text-dark">
+                <div class="d-flex align-items-center p-2 rounded mb-2" style="background:#fff;">
+                  <div class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center me-3"
+                       style="width:50px; height:50px;">
+                    {{ user.username|first|upper }}
+                  </div>
+
+                  <div>
+                    <strong>{{ user.username }}</strong>
+                    <p class="text-muted mb-0 small">Click to message</p>
+                  </div>
+                </div>
+              </a>
+            {% empty %}
+              <p class="text-muted">No users found.</p>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="col-md-8 d-flex flex-column justify-content-center align-items-center text-center">
+          <div class="border rounded-circle d-flex justify-content-center align-items-center mb-3"
+               style="width:90px; height:90px; font-size:40px;">
+            ✈
+          </div>
+
+          <h4>Your Messages</h4>
+          <p class="text-muted">Select a user to start a conversation.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
 
 </div>
 
-<!-- here goes a list with the dms idk -->
-  
 {% endblock %}
