@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
-from .models import SpacePost, SpaceComment, GameScore, ScoreComment, DirectMessage
+from .models import SpacePost, SpaceComment, GameScore, ScoreComment, DirectMessage , FriendRequest, Friendship , Profile
 from googleapiclient.discovery import build
 from django.db.models import Q
 from datetime import datetime, timedelta, timezone, date
@@ -17,7 +17,7 @@ load_dotenv()
 def home(request):
     return render(request, 'home.html')
 
-
+  
 def signup(request):
     if request.method == "POST":
         username = request.POST['username']
