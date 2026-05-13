@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-5" style="background-color: #f5f7fa; min-height: 100vh;">
+  <div class="container">
+
+    <div class="text-center mb-5">
+      <h1 class="fw-bold">Search Results</h1>
+      <p class="text-muted">Results for "{{ query }}"</p>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4" style="border-left: 5px solid #dc3545;">
+      <div class="card-body p-4">
+        <h3 class="fw-bold mb-3">Users</h3>
+
+        {% for user in users %}
+          <div class="d-flex justify-content-between align-items-center border rounded p-3 mb-2 bg-light">
+            <strong>{{ user.username }}</strong>
+
+            <a href="{% url 'dm_chat' user.username %}" class="btn btn-dark btn-sm">
+              Message
+            </a>
+          </div>
+        {% empty %}
+          <p class="text-muted">No users found.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="card shadow-sm border-0" style="border-left: 5px solid #0d6efd;">
+      <div class="card-body p-4">
+        <h3 class="fw-bold mb-3">Posts</h3>
+
+        {% for post in posts %}
+          <div class="border rounded p-3 mb-3 bg-light">
+            <small class="text-muted">
+              Posted by <strong>{{ post.user.username }}</strong>
+            </small>
+
+            <h4 class="fw-bold mt-2">{{ post.title }}</h4>
+            <p>{{ post.message }}</p>
+
+            <a href="{% url 'spaces' %}" class="btn btn-outline-danger btn-sm">
+              View in Spaces
+            </a>
+          </div>
+        {% empty %}
+          <p class="text-muted">No posts found.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

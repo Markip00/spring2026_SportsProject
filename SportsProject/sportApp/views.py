@@ -276,3 +276,19 @@ def clips(request):
 
     return render(request, 'clips.html', {'videos': videos})
 
+def search(request):
+    query = request.GET.get("q", "")
+
+    posts = SpacePost.objects.filter(
+        Q(title__icontains=query) |
+        Q(message__icontains=query) |
+        Q(user__username__icontains=query)
+    ).distinct()
+
+    users = User.objects.filter(username__icontains=query)
+
+    return render(request, "search.html", {
+        "query": query,
+        "posts": posts,
+        "users": users
+    })

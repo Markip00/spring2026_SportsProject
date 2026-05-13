@@ -32,70 +32,159 @@
 <nav class="navbar navbar-expand-lg header_style navbar-dark header1">
   <div class="container-fluid">
 
-    <a class="navbar-brand header1" href="{% url 'home' %}">3pointers</a>
+    <!-- LOGO -->
+    <a class="navbar-brand header1" href="{% url 'home' %}">
+      3pointers
+    </a>
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+    <!-- MOBILE BUTTON -->
+    <button class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent">
+
       <span class="navbar-toggler-icon"></span>
+
     </button>
 
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <!-- NAVBAR CONTENT -->
+    <div class="collapse navbar-collapse"
+         id="navbarSupportedContent">
 
+      <!-- LEFT LINKS -->
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
- 
-
         <li class="nav-item">
-          <a class="nav-link active" href="{% url 'spaces' %}">spaces</a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link active" href="{% url 'clips' %}">Clips</a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link active" href="{% url 'scores' %}">GameScores</a>
-        </li>
-
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle text-white" href="#" data-bs-toggle="dropdown">
-            My Profile
+          <a class="nav-link active"
+             href="{% url 'spaces' %}">
+             Spaces
           </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link active"
+             href="{% url 'clips' %}">
+             Clips
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link active"
+             href="{% url 'scores' %}">
+             GameScores
+          </a>
+        </li>
+
+        <!-- PROFILE DROPDOWN -->
+        <li class="nav-item dropdown">
+
+          <a class="nav-link dropdown-toggle text-white"
+             href="#"
+             data-bs-toggle="dropdown">
+
+            My Profile
+
+          </a>
+
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="{% url 'edit_profile' %}">Edit Profile</a></li>
-            <li><a class="dropdown-item" href="{% url 'add_friends' %}">Add Friends</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{% url 'premium' %}">Upgrade to premium</a></li>
+
+            <li>
+              <a class="dropdown-item"
+                 href="{% url 'edit_profile' %}">
+                 Edit Profile
+              </a>
+            </li>
+
+            <li>
+              <a class="dropdown-item"
+                 href="{% url 'add_friends' %}">
+                 Add Friends
+              </a>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item"
+                 href="{% url 'premium' %}">
+                 Upgrade to Premium
+              </a>
+            </li>
+
           </ul>
         </li>
 
+        <!-- DMS -->
         <div class="d-flex justify-content-center align-items-center">
-             <a class="nav-link active fa-regular fa-envelope fa-xl text-white" href="{% url 'direct_messages' %}"></a>
+
+          <a class="nav-link active fa-regular fa-envelope fa-xl text-white"
+             href="{% url 'direct_messages' %}">
+          </a>
+
         </div>
 
       </ul>
 
+      <!-- LOGIN / LOGOUT -->
       <div class="d-flex align-items-center me-3">
+
         {% if user.is_authenticated %}
-          <span class="text-white me-3">Hi, {{ user.username }}</span>
-          <a class="btn btn-outline-light me-2" href="{% url 'logout' %}">Logout</a>
+
+          <span class="text-white me-3">
+            Hi, {{ user.username }}
+          </span>
+
+          <a class="btn btn-outline-light me-2"
+             href="{% url 'logout' %}">
+             Logout
+          </a>
+
         {% else %}
-          <a class="btn btn-outline-light me-2" href="{% url 'login' %}">Login</a>
-          <a class="btn btn-warning me-2" href="{% url 'signup' %}">Sign Up</a>
+
+          <a class="btn btn-outline-light me-2"
+             href="{% url 'login' %}">
+             Login
+          </a>
+
+          <a class="btn btn-warning me-2"
+             href="{% url 'signup' %}">
+             Sign Up
+          </a>
+
         {% endif %}
+
       </div>
 
-      <form class="d-flex" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search">
-        <button type="button" class="btn btn-outline-light">Search</button>
+      <!-- SEARCH -->
+      <form class="d-flex"
+            role="search"
+            method="GET"
+            action="{% url 'search' %}">
+
+        <input class="form-control me-2"
+               type="search"
+               name="q"
+               placeholder="Search users or posts"
+               value="{{ request.GET.q }}">
+
+        <button type="submit"
+                class="btn btn-outline-light">
+          Search
+        </button>
+
       </form>
 
     </div>
   </div>
 </nav>
 
-{% block content %}{% endblock %}
+<!-- PAGE CONTENT -->
+{% block content %}
+{% endblock %}
 
-<!--bootstrap js-->
+<!-- BOOTSTRAP JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
