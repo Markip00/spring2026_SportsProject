@@ -3,10 +3,17 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+
+from .models import SpacePost, SpaceComment
+from googleapiclient.discovery import build
+
 from .models import SpacePost, SpaceComment, GameScore, ScoreComment
 
-from datetime import date
-import requests
+
+from datetime import datetime, timedelta, timezone, date
+from dotenv import load_dotenv
+import requests, os, html
+load_dotenv()
 
 @login_required
 def home(request):
@@ -108,9 +115,6 @@ def spaces(request):
     posts = SpacePost.objects.all().order_by("-created_at")
     return render(request, "spaces.html", {"posts": posts})
 
-def clips(request):
-    return render(request, 'clips.html', {})
-
 def scores(request): 
     API_KEY = "00ba9f97-a38b-42c7-b1f6-9db22f17d68a" 
     BASE_URL = "https://api.balldontlie.io"
@@ -180,4 +184,64 @@ def direct_messages(request):
 def premium(request):
     return render(request, 'premium.html',{})
 
+def youtube_search(query):
+    youtube = build('youtube', 'v3', developerKey='your_key_here')
+
+    request = youtube.search().list(
+        q=query,
+        part='snippet',
+        type='video',     # video, channel, playlist
+        maxResults=10,    # max results pulled
+        order='relevance' # date, relevance, viewcount, etc
+        # publishedAfter: 2026-01-01T00:00:00Z ## finds clips from last 24 hours or curr week
+    )
+
+    response = request.execute()
+
+    for item in response.get('items', []):
+        title = item['snippet']['title']
+        video_id = item['id']['videoId']
+        print(f"Title: {title} | ID: {video_id}")
+
+def clips(request):
+    api_key = os.getenv('YOUTUBE_API_KEY')
+
+    time_threshold = datetime.now(timezone.utc) - timedelta(hours=48)
+    published_after = time_threshold.strftime('%Y-%m-%dT%H:%M:%SZ')
+
+    NBA_CHANNEL_ID = "UCWJ2lWNubArHWmf3FIHbfcQ"
+
+    youtube = build('youtube', 'v3', developerKey=api_key)
+
+    params = {
+        'part': 'snippet',
+        'q': 'NBA highlights -shorts',
+        'key': api_key,
+        'maxResults': 30,
+        'type': 'video',
+        'videoEmbeddable': 'true',
+        'publishedAfter': published_after,
+        'order': 'viewCount',
+    }
+
+    response = requests.get('https://www.googleapis.com/youtube/v3/search', params=params)
+    results = response.json().get('items', [])
+
+    videos = []
+    for item in results:
+        channel_id = item['snippet']['channelId']
+
+        if channel_id == NBA_CHANNEL_ID:
+            continue
+
+        videos.append({
+            'title': html.unescape(item['snippet']['title']),
+            'id': item['id']['videoId'],
+            'thumbnail': item['snippet']['thumbnails']['high']['url'],
+        })
+
+        if len(videos) >= 8:
+            break
+
+    return render(request, 'clips.html', {'videos': videos})
 
