@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+ 
+ 
 
 class SpacePost(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -22,3 +24,11 @@ class Profile(models.Model):
     bio = models.TextField(blank=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True)
     favorite_team = models.CharField(max_length=100, blank=True)
+
+ 
+class FriendRequest(models.Model):
+    from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_requests")
+    to_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="received_requests")
+ 
+class Friendship(models.Model):
+    users = models.ManyToManyField(User)

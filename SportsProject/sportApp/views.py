@@ -5,10 +5,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import SpacePost, SpaceComment
 from .models import Profile
-
-
+from .models import FriendRequest, Friendship 
 from datetime import date
 import requests
+
+
+ 
+ 
+
 
 @login_required
 def home(request):
@@ -156,6 +160,8 @@ def premium(request):
 
  
 def profile(request):
+    if not request.user.is_authenticated:
+        return redirect("login")
     API_KEY = "apikeygoeshere"
     BASE_URL = "https://api.balldontlie.io/v1"
     user = request.user
@@ -196,4 +202,65 @@ def profile(request):
     return render(request, "profile.html", {
         "profile": profile,
         "teams": teams
+    })
+
+ 
+ 
+def add_friends(request):
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    # send friend request
+    if request.method == "POST" and "friend_username" in request.POST:
+        username = request.POST.get("friend_username")
+        try:
+            target_user = User.objects.get(username=username)
+            if target_user != request.user:
+                already_sent = FriendRequest.objects.filter(
+                    from_user=request.user,
+                    to_user=target_user
+                ).exists()
+                if not already_sent:
+                    FriendRequest.objects.create(
+                        from_user=request.user,
+                        to_user=target_user
+                    )
+        except User.DoesNotExist:
+            pass
+
+    # accept request
+    if request.method == "POST" and "accept_request" in request.POST:
+        request_id = request.POST.get("accept_request")
+        friend_request = FriendRequest.objects.get(
+            id=request_id,
+            to_user=request.user
+        )
+        friendship = Friendship.objects.create()
+        friendship.users.add(request.user)
+        friendship.users.add(friend_request.from_user)
+        friend_request.delete()
+
+    # decline request
+    if request.method == "POST" and "decline_request" in request.POST:
+        request_id = request.POST.get("decline_request")
+        friend_request = FriendRequest.objects.get(
+            id=request_id,
+            to_user=request.user
+        )
+
+        friend_request.delete()
+
+    # get friends
+    friendships = Friendship.objects.filter(users=request.user)
+    friends = []
+    for friendship in friendships:
+        for user in friendship.users.all():
+            if user != request.user:
+                friends.append(user)
+    # get incoming requests
+    friend_requests = FriendRequest.objects.filter(to_user=request.user)
+
+    return render(request, "add_friends.html", {
+        "friends": friends,
+        "friend_requests": friend_requests
     })
