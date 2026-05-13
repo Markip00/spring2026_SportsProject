@@ -7,12 +7,11 @@ from django.contrib import messages
 from .models import SpacePost, SpaceComment, GameScore, ScoreComment, DirectMessage
 from googleapiclient.discovery import build
 from django.db.models import Q
-
-
 from datetime import datetime, timedelta, timezone, date
 from dotenv import load_dotenv
 import requests, os, html
 load_dotenv()
+
 
 @login_required
 def home(request):
@@ -169,9 +168,7 @@ def scores(request):
         "games": games,
         "date": today_display
     })
-
-def edit_profile(request):
-    return render(request, 'edit_profile.html',{})
+ 
 
 def add_friends(request):
     return render(request, 'add_friends.html',{})
@@ -291,4 +288,111 @@ def search(request):
         "query": query,
         "posts": posts,
         "users": users
+    })
+
+
+def profile(request):
+    if not request.user.is_authenticated:
+        return redirect("login")
+    API_KEY = "apikeygoeshere"
+    BASE_URL = "https://api.balldontlie.io/v1"
+    user = request.user
+    profile, created = Profile.objects.get_or_create(user=user)
+ 
+    response = requests.get(
+        f"{BASE_URL}/teams",
+        headers={"Authorization": f"Bearer {API_KEY}"}
+    )
+    teams = []
+    if response.ok:
+        try:
+            teams = response.json().get("data", [])
+        except Exception:
+            teams = []
+
+    if request.method == "POST":
+
+        # username
+        name = request.POST.get("name")
+        if name:
+            user.username = name
+            user.save()
+
+        # bio
+        profile.bio = request.POST.get("bio", "")
+
+        # favorite team
+        profile.favorite_team = request.POST.get("favorite_team", "")
+
+        # profile picture
+        if request.FILES.get("profile_picture"):
+            profile.profile_picture = request.FILES["profile_picture"]
+
+        profile.save()
+        return redirect("profile")
+ 
+    return render(request, "profile.html", {
+        "profile": profile,
+        "teams": teams
+    })
+
+ 
+ 
+def add_friends(request):
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    # send friend request
+    if request.method == "POST" and "friend_username" in request.POST:
+        username = request.POST.get("friend_username")
+        try:
+            target_user = User.objects.get(username=username)
+            if target_user != request.user:
+                already_sent = FriendRequest.objects.filter(
+                    from_user=request.user,
+                    to_user=target_user
+                ).exists()
+                if not already_sent:
+                    FriendRequest.objects.create(
+                        from_user=request.user,
+                        to_user=target_user
+                    )
+        except User.DoesNotExist:
+            pass
+
+    # accept request
+    if request.method == "POST" and "accept_request" in request.POST:
+        request_id = request.POST.get("accept_request")
+        friend_request = FriendRequest.objects.get(
+            id=request_id,
+            to_user=request.user
+        )
+        friendship = Friendship.objects.create()
+        friendship.users.add(request.user)
+        friendship.users.add(friend_request.from_user)
+        friend_request.delete()
+
+    # decline request
+    if request.method == "POST" and "decline_request" in request.POST:
+        request_id = request.POST.get("decline_request")
+        friend_request = FriendRequest.objects.get(
+            id=request_id,
+            to_user=request.user
+        )
+
+        friend_request.delete()
+
+    # get friends
+    friendships = Friendship.objects.filter(users=request.user)
+    friends = []
+    for friendship in friendships:
+        for user in friendship.users.all():
+            if user != request.user:
+                friends.append(user)
+    # get incoming requests
+    friend_requests = FriendRequest.objects.filter(to_user=request.user)
+
+    return render(request, "add_friends.html", {
+        "friends": friends,
+        "friend_requests": friend_requests
     })
