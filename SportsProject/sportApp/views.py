@@ -294,7 +294,7 @@ def search(request):
 def profile(request):
     if not request.user.is_authenticated:
         return redirect("login")
-    API_KEY = "apikeygoeshere"
+    API_KEY = "00ba9f97-a38b-42c7-b1f6-9db22f17d68a"
     BASE_URL = "https://api.balldontlie.io/v1"
     user = request.user
     profile, created = Profile.objects.get_or_create(user=user)
