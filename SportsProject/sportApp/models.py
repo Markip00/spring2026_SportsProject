@@ -27,7 +27,13 @@ class GameScore(models.Model):
     home_score = models.IntegerField(default=0)
     away_score = models.IntegerField(default=0)
     status = models.CharField(max_length=100)
-    game_date = models.CharField(max_length=20)
+    game_date = models.DateField()
+    time = models.CharField(max_length=50, null=True, blank=True)
+    location = models.CharField(max_length=100, null=True, blank=True)
+
+    @property
+    def date(self):
+        return self.game_date
 
     def __str__(self):
         return f"{self.away_team} vs {self.home_team}"

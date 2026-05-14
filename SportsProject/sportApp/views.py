@@ -67,7 +67,97 @@ def user_logout(request):
     return redirect('login')
 
 def home(request):
-    return render(request, 'home.html', {})
+    latest_scores = [
+        {
+            'home_team': 'Detroit Pistons',
+            'away_team': 'Cleveland Cavaliers',
+            'home_score': 113,
+            'away_score': 117,
+            'status': 'Final',
+            'date': 'May 13, 2026'
+        }
+    ]
+
+    upcoming_games = [
+        {
+            'home_team': 'Minnesota Timberwolves',
+            'away_team': 'San Antonio Spurs',
+            'date': 'Friday, May 15, 2026',
+            'time': '8:30 PM CST',
+            'location': 'Target Center'
+        }
+    ]
+
+    # latest news 
+    latest_news = []
+    try:
+        news_url = "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/news"
+        news_response = requests.get(news_url, timeout = 5)
+
+        if news_response.status_code == 200:
+            articles = news_response.json().get('articles', [])[:3]
+
+            for article in articles:
+                images = article.get('images', [])
+                image_url = images[0].get('url') if images else 'https://via.placeholder.com/400x200?text=NBA+News'
+
+                link = article.get('links', {}).get('web', {}).get('href', '#')
+
+                latest_news.append({
+                    "title": article.get('headline'),
+                    "summary": article.get('description'),
+                    "image": image_url,
+                    "link": link
+                })
+    except Exception as e:
+        print(f"Error fetching news: {e}")
+
+    # league standings
+    standings = []
+    try:
+        standings_url = "https://site.api.espn.com/apis/v2/sports/basketball/nba/standings"
+        standings_response = requests.get(standings_url, timeout=5)
+
+        if standings_response.status_code == 200:
+            data = standings_response.json()
+            all_teams = []
+
+            for conference in data.get('children', []):
+                for entry in conference.get('standings', {}).get('entries',[]):
+                    team_name = entry.get('team', {}).get('displayName', 'Unknown')
+
+                    wins, losses, win_pct = 0, 0, "0.000"
+                    for stat in entry.get('stats', []):
+                        if stat.get('name') == 'wins':
+                            wins = int(stat.get('value', 0))
+                        elif stat.get('name') == 'losses':
+                            losses = int(stat.get('value',0))
+                        elif stat.get('name') == 'winPercent':
+                            win_pct = stat.get('displayValue', "0.000")
+
+                    all_teams.append({
+                        "name": team_name,
+                        "wins": wins,
+                        "losses": losses,
+                        "win_percentage": win_pct,
+                        "sort_pct": wins / (wins + losses) if (wins + losses) > 0 else 0
+                    })
+
+            all_teams.sort(key=lambda x: x['sort_pct'], reverse = True)
+            standings = all_teams[:10]
+
+    except Exception as e:
+        print(f"Error fetching standings: {e}")
+
+    # pass to template (home.html)
+    context = {
+        "latest_scores": latest_scores,
+        "upcoming_games": upcoming_games,
+        "latest_news": latest_news,
+        "standings": standings,
+    }
+
+    return render(request, 'home.html', context)
  
 def spaces(request):
     if request.method == "POST":
@@ -150,6 +240,10 @@ def scores(request):
         data = response.json()
 
         for game in data.get("data", []):
+            # logic to extract time 
+            current_status = game["status"]
+            game_time = current_status if ("PM" in current_status or "AM" in current_status) else "Final"
+
             GameScore.objects.update_or_create(
                 game_id=str(game["id"]),
                 defaults={
